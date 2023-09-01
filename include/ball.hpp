@@ -15,5 +15,4 @@ private:
     Engine* eng;
 
     unsigned int id;
-    static unsigned int amount;
 };

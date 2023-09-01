@@ -2,13 +2,11 @@
 
 #define RADIUS 4
 
-static unsigned int amount = 0;
-
 Ball::Ball(Vector2 pos, Vector2 spd, Engine* eng) {
     this->pos = pos;
     this->spd = spd;
     this->eng = eng;
-    id = Interface::amount++;
+    id = 0;
 }
 
 Ball::~Ball() {
