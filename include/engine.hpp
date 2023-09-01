@@ -4,19 +4,21 @@
 
 class Engine {
 public:
-    Engine(const int width, const int height = 1080, const float aspectRatio = 16.0 / 9.0);
+    Engine(unsigned int height, float aspectRatio);
     ~Engine();
-
     void start();
-    unsigned int pushObject(Interface* obj);
-    void removeObject(unsigned int pos);
+
+    unsigned int getScreenWidth() const;
+    unsigned int getScreenHeight() const;
+
+    void removeObject(unsigned int id);
 private:
     void update();
     void render();
 private:
     const float aspectRatio;
-    const int width;
-    const int height;
+    const unsigned int width;
+    const unsigned int height;
 
     std::vector<Interface*> objList;
 };

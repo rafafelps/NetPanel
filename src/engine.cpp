@@ -1,6 +1,7 @@
 #include "engine.hpp"
+#include "ball.hpp"
 
-Engine::Engine(const int width, const int height, const float aspectRatio) :
+Engine::Engine(unsigned int height, float aspectRatio) :
 aspectRatio(aspectRatio),
 width(height * aspectRatio),
 height(height) {
@@ -19,7 +20,29 @@ void Engine::start() {
     }
 }
 
+unsigned int Engine::getScreenWidth() const {
+    return width;
+}
+
+unsigned int Engine::getScreenHeight() const {
+    return height;
+}
+
+void Engine::removeObject(unsigned int id) {
+    unsigned int position = 0;
+    for (auto obj : objList) {
+        if (obj->getID() == id) {
+            objList.erase(objList.begin() + position);
+        }
+        position++;
+    }
+}
+
 void Engine::update() {
+    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+        objList.push_back(new Ball(GetMousePosition(), Vector2{1,1}, this));
+    }
+
     for (auto obj : objList) {
         obj->update();
     }
@@ -35,13 +58,4 @@ void Engine::render() {
 
     DrawFPS(0, 0);
     EndDrawing();
-}
-
-unsigned int Engine::pushObject(Interface* obj) {
-    objList.push_back(obj);
-    return objList.size() - 1;
-}
-
-void Engine::removeObject(unsigned int pos) {
-    objList.erase(objList.begin() + pos);
 }
