@@ -1,5 +1,4 @@
 #include "engine.hpp"
-#include "ball.hpp"
 
 Engine::Engine(unsigned int height, float aspectRatio) :
 aspectRatio(aspectRatio),
@@ -39,10 +38,6 @@ void Engine::removeObject(unsigned int id) {
 }
 
 void Engine::update() {
-    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-        objList.push_back(new Ball(GetMousePosition(), Vector2{1,1}, this));
-    }
-
     for (auto obj : objList) {
         obj->update();
     }
