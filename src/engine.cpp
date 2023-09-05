@@ -1,4 +1,5 @@
 #include "engine.hpp"
+#include "menu.hpp"
 
 Engine::Engine(unsigned int height, float aspectRatio) :
 aspectRatio(aspectRatio),
@@ -6,6 +7,9 @@ width(height * aspectRatio),
 height(height) {
     InitWindow(this->width, this->height, "NetPanel");
     SetTargetFPS(60);
+
+    menu.setEngine(this);
+    objList.push_back(&menu);
 }
 
 Engine::~Engine() {
@@ -51,6 +55,5 @@ void Engine::render() {
         obj->render();
     }
 
-    DrawFPS(0, 0);
     EndDrawing();
 }

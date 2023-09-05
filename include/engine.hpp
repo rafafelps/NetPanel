@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "interface.hpp"
+#include "menu.hpp"
 
 class Engine {
 public:
@@ -21,4 +22,5 @@ private:
     const unsigned int height;
 
     std::vector<Interface*> objList;
+    Menu menu;
 };
