@@ -2,15 +2,18 @@
 #include "interface.hpp"
 #include "button.hpp"
 
-#define TRAIN 0
-#define DRAW 1
-#define ERRORS 2
+enum state {
+    NONE,
+    TRAIN,
+    DRAW,
+    ERRORS
+};
 
 class Engine;
 
 class Menu : public Interface {
 public:
-    Menu();
+    Menu(Engine* eng);
     ~Menu();
 
     void update();
@@ -18,7 +21,7 @@ public:
 
     void setEngine(Engine* eng);
 private:
-    unsigned char state;
+    enum state state;
     Engine* eng;
     Button buttons[3];
 };

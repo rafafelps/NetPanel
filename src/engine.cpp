@@ -4,11 +4,12 @@
 Engine::Engine(unsigned int height, float aspectRatio) :
 aspectRatio(aspectRatio),
 width(height * aspectRatio),
-height(height) {
+height(height),
+menu(this) {
     InitWindow(this->width, this->height, "NetPanel");
     SetTargetFPS(60);
 
-    menu.setEngine(this);
+
     objList.push_back(&menu);
 }
 

@@ -12,12 +12,17 @@ public:
     void update();
     void render();
 
+    bool clicked() const;
+    bool select(bool option);
+
     void setEngine(Engine* eng);
-    void setPosition(Vector2 pos);
+    void setPosition(Rectangle pos);
     void setText(std::string txt);
 
 private:
     Engine* eng;
-    Vector2 position;
+    Rectangle position;
     std::string text;
+    unsigned char fontSize;
+    bool isSelected;
 };
