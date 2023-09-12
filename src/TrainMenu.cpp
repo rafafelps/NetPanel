@@ -17,12 +17,13 @@ TrainMenu::TrainMenu(Engine* eng, Menu* mn, Dataset* mnist) {
 }
 
 TrainMenu::~TrainMenu() {
-    localNetwork->setLearn(false);
-    if (learnThread)
-        learnThread->join();
+    if (localNetwork) {
+        localNetwork->setLearn(false);
+        if (learnThread)
+            learnThread->join();
 
-    if (localNetwork)
         mn->setNewGlobalNet(localNetwork);
+    }
 }
 
 void TrainMenu::update() {
@@ -69,7 +70,7 @@ void TrainMenu::update() {
         if (epoch > 0) {
             totalData += epoch * mnist->getSize();
         }
-        accuracy = localNetwork->getCorrectPredictions() / static_cast<float>(totalData);
+        accuracy = localNetwork->getCorrectPredictions() / (static_cast<float>(totalData) + 1e-10f);
     }
 }
 
@@ -87,14 +88,29 @@ void TrainMenu::render() {
     float menuBorder = eng->getScreenWidth() * 0.25;
     float trMenuWidth = eng->getScreenWidth() * 0.75;
     float fontSize = 32.f / 720.f * eng->getScreenHeight();
-    std::string s = std::to_string(epoch);
-    DrawText(s.c_str(), (trMenuWidth * 0.15f + menuBorder) - (MeasureText(s.c_str(), fontSize) / 2.f), eng->getScreenHeight() * 0.05f, fontSize, (Color){158, 158, 158, 255});
-
+    float biggerFontSize = 60.f / 720.f * eng->getScreenHeight();
     float trMenuCenterX = menuBorder + trMenuWidth * 0.5;
+    Vector2 topTextSize = {trMenuWidth / 6.f, eng->getScreenHeight() * 0.05f};
+    
+    std::string s = std::to_string(epoch);
+    DrawText("EPOCHS", menuBorder + topTextSize.x - MeasureText("EPOCHS", fontSize) * 0.5f, topTextSize.y, fontSize, (Color){158, 158, 158, 255});
+    DrawText(s.c_str(), menuBorder + topTextSize.x - MeasureText(s.c_str(), fontSize) * 0.5f, eng->getScreenHeight() * 0.1f, fontSize, (Color){158, 158, 158, 255});
+
+    s = std::to_string(data);
+    DrawText("DATA", menuBorder + topTextSize.x * 5.f - MeasureText("DATA", fontSize) * 0.5f, topTextSize.y, fontSize, (Color){158, 158, 158, 255});
+    DrawText(s.c_str(), menuBorder + topTextSize.x * 5.f - MeasureText(s.c_str(), fontSize) * 0.5f, eng->getScreenHeight() * 0.1f, fontSize, (Color){158, 158, 158, 255});
+
+    s = std::to_string(accuracy + 0.00005);
+    s = s.substr(0, s.find(".") + 5);
+    DrawText("ACCURACY", trMenuCenterX - MeasureText("ACCURACY", biggerFontSize) * 0.5f, eng->getScreenHeight() * 0.1f, biggerFontSize, (Color){158, 158, 158, 255});
+    DrawText(s.c_str(), trMenuCenterX - MeasureText(s.c_str(), biggerFontSize) * 0.5f, (eng->getScreenHeight() * 0.5f - (eng->getScreenHeight() * 0.1f + biggerFontSize)) * 0.5f + eng->getScreenHeight() * 0.1f + biggerFontSize * 0.5f, biggerFontSize, (Color){158, 158, 158, 255});
+
     float third = trMenuWidth / 3.f;
     DrawLine(menuBorder + third, 0, menuBorder + third, eng->getScreenHeight(), RED);
     DrawLine(menuBorder + 2 * third, 0, menuBorder + 2 * third, eng->getScreenHeight(), RED);
     DrawLine(trMenuCenterX, 0, trMenuCenterX, eng->getScreenHeight(), RED);
+    DrawLine(menuBorder + third/2, 0, menuBorder + third/2, eng->getScreenHeight(), RED);
+    DrawLine(menuBorder + 5 * third / 2.f, 0, menuBorder + 5 * third / 2.f, eng->getScreenHeight(), RED);
 }
 
 void TrainMenu::initButtons() {
@@ -154,8 +170,15 @@ void TrainMenu::startNetwork() {
 }
 
 void TrainMenu::createNewNetwork() {
-    if (localNetwork)
+    if (localNetwork) {
+        localNetwork->setLearn(false);
+        if (learnThread) {
+            learnThread->join();
+            delete learnThread;
+            learnThread = nullptr;
+        }
         delete localNetwork;
+    }
 
     std::vector<unsigned int> v;
     v.push_back(mnist->getWidth() * mnist->getHeight());
@@ -174,10 +197,18 @@ void TrainMenu::loadNetwork() {
     // Abrir seletor de arquivo do windows
     std::string path = "first";
 
-    if (localNetwork)
+    if (localNetwork) {
+        localNetwork->setLearn(false);
+        if (learnThread) {
+            learnThread->join();
+            delete learnThread;
+            learnThread = nullptr;
+        }
         delete localNetwork;
+    }
 
     localNetwork = new NeuralNetwork();
+    localNetwork->setDataset(mnist);
     localNetwork->setName(path);
     localNetwork->loadNetworkState();
 

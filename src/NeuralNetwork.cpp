@@ -242,7 +242,9 @@ void NeuralNetwork::learn(unsigned int epochs) {
             
             correctData[label]--;
         }
-        currEpoch++;
+
+        if (isLearning)
+            currEpoch++;
 
         delete[] correctData;
     }
