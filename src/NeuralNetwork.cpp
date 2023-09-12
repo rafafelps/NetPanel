@@ -3,15 +3,22 @@
 #include <random>
 #include <fstream>
 #include <algorithm>
-#include <iostream>
 #include <limits>
 #include "NeuralNetwork.hpp"
 
 NeuralNetwork::NeuralNetwork(std::vector<unsigned int> sizes) {
+    isLearning = false;
+    currEpoch = 0;
+    currData = 0;
+    correctEval = 0;
     setStructure(sizes);
 }
 
 NeuralNetwork::NeuralNetwork(NeuralNetwork* originalNet) {
+    isLearning = false;
+    currEpoch = 0;
+    currData = 0;
+    correctEval = 0;
     unsigned int layerAmount = originalNet->layers.size();
     layers.push_back(new Layer(originalNet->layers[0]->getSize(), NULL));
     for (int layer = 1; layer < layerAmount; layer++) {
@@ -39,7 +46,12 @@ NeuralNetwork::NeuralNetwork(NeuralNetwork* originalNet) {
     }
 }
 
-NeuralNetwork::NeuralNetwork() {}
+NeuralNetwork::NeuralNetwork() {
+    isLearning = false;
+    currEpoch = 0;
+    currData = 0;
+    correctEval = 0;
+}
 
 NeuralNetwork::~NeuralNetwork() {
     unsigned char size = layers.size();
@@ -49,13 +61,15 @@ NeuralNetwork::~NeuralNetwork() {
     layers.clear();
 }
 
-float* NeuralNetwork::getResults() const {
+float* NeuralNetwork::getResults(unsigned int* highest) const {
     unsigned char currLayer = layers.size() - 1;
     unsigned int layerSize = layers[currLayer]->getSize();
     float* endVec = new float[layerSize];
-
+    
+    *highest = 0;
     for (int currNeuron = 0; currNeuron < layerSize; currNeuron++) {
         endVec[currNeuron] = layers[currLayer]->getNeuron(currNeuron)->getActValue();
+        if (endVec[currNeuron] > endVec[*highest]) { *highest = currNeuron; }
     }
 
     return endVec;
@@ -78,6 +92,18 @@ float NeuralNetwork::getCost(unsigned int correctResult) const {
     return - logf(layers[layers.size() - 1]->getNeuron(correctResult)->getActValue() + 1e-8);
 }
 
+unsigned int NeuralNetwork::getCurrentEpoch() const {
+    return currEpoch;
+}
+
+unsigned int NeuralNetwork::getCurrentData() const {
+    return currData;
+}
+
+unsigned int NeuralNetwork::getCorrectPredictions() const {
+    return correctEval;
+}
+
 void NeuralNetwork::setDataset(Dataset* dataset) {
     this->dataset = dataset;
 }
@@ -92,6 +118,10 @@ void NeuralNetwork::setStructure(std::vector<unsigned int> sizes) {
     for (int layer = 1; layer < layerAmount; layer++) {
         layers.push_back(new Layer(sizes[layer], layers[layer-1]));
     }
+}
+
+void NeuralNetwork::setLearn(bool state) {
+    isLearning = state;
 }
 
 void NeuralNetwork::adam(unsigned int t, float* correctData, float* m, float* v, float alpha, float beta1, float beta2, float epsilon) {
@@ -175,9 +205,7 @@ void NeuralNetwork::softmax(unsigned char layer) {
     }
 }
 
-void NeuralNetwork::learn(unsigned int epochs, bool loadFromFile) {
-    loadFromFile ? loadNetworkState() : kaimingInitialization();
-
+void NeuralNetwork::learn(unsigned int epochs) {
     std::random_device rd{};
     std::mt19937 gen(rd());
     gen.seed(time(NULL));
@@ -193,13 +221,11 @@ void NeuralNetwork::learn(unsigned int epochs, bool loadFromFile) {
 
     unsigned int t = 0;
     for (unsigned int epoch = 0; epoch < epochs; epoch++) {
-        unsigned int totalEval = 0;
-        unsigned int correctEval = 0;
         unsigned int label;
         float* correctData = new float[outputSize]();
         std::shuffle(imageOrder.begin(), imageOrder.end(), gen);
 
-        for (unsigned int image = 0; image < dataSize; image++) {
+        for (unsigned int image = 0; image < dataSize && isLearning; image++) {
             t++;
             label = dataset->data[imageOrder[image]]->label;
             correctData[label]++;
@@ -207,25 +233,19 @@ void NeuralNetwork::learn(unsigned int epochs, bool loadFromFile) {
             propagate(dataset->data[imageOrder[image]]->values);
             adam(t, correctData, m, v);
 
-            /*float* lastLayer = getResults();
-            unsigned int highVal = 0;
-            for (int i = 0; i < outputSize; i++) {
-                if (lastLayer[i] > lastLayer[highVal]) {
-                    highVal = i;
-                }
-            }
-            if (highVal == label) { correctEval++; }
-            totalEval++;
+            unsigned int highVal;
+            float* lastLayer = getResults(&highVal);
+            delete lastLayer;
 
-            float acc = static_cast<float>(correctEval) / totalEval;
-            std::cout << "\rImage: " << image << "  Accuracy: " << acc << std::flush;
-            */
+            if (highVal == label) { correctEval++; }
+            currData++;
+            
             correctData[label]--;
         }
+        currEpoch++;
 
         delete[] correctData;
     }
-    saveNetworkState();
     
     delete[] m;
     delete[] v;

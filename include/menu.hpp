@@ -22,12 +22,13 @@ public:
     void update();
     void render();
 
-    Dataset* getTrainingDataset();
-    Dataset* getTestDataset();
-
+    std::string getModelName() const;
+    NeuralNetwork* getGlobalNetwork();
+    
     void setEngine(Engine* eng);
-    void setModel(std::string s);
+    void setModelName(std::string s);
     void setNewGlobalNet(NeuralNetwork* net);
+    
     Interface* showNewMenu(enum state state);
 private:
     void initButtons();

@@ -12,6 +12,7 @@ Menu::Menu(Engine* eng) {
     this->eng = eng;
     globalNetwork = nullptr;
     currentMenu = nullptr;
+    modelName = "";
 
     mnistTraining.setData("dataset/mnist/training/train-labels.idx1-ubyte",
                           "dataset/mnist/training/train-images.idx3-ubyte");
@@ -22,11 +23,11 @@ Menu::Menu(Engine* eng) {
 }
 
 Menu::~Menu() {
-    if (globalNetwork)
-        delete globalNetwork;
-
     if (currentMenu)
         delete currentMenu;
+        
+    if (globalNetwork)
+        delete globalNetwork;
 }
 
 void Menu::update() {
@@ -63,24 +64,23 @@ void Menu::render() {
         currentMenu->render();
 }
 
-Dataset* Menu::getTrainingDataset() {
-    return &mnistTraining;
+std::string Menu::getModelName() const {
+    return modelName;
 }
 
-Dataset* Menu::getTestDataset() {
-    return &mnistTest;
+NeuralNetwork* Menu::getGlobalNetwork() {
+    return globalNetwork;
 }
 
 void Menu::setEngine(Engine* eng) {
     this->eng = eng;
 }
 
-void Menu::setModel(std::string s) {
+void Menu::setModelName(std::string s) {
     modelName = s;
 }
 
 void Menu::setNewGlobalNet(NeuralNetwork* net) {
-    if (globalNetwork) { delete globalNetwork; }
     globalNetwork = net;
 }
 
@@ -89,7 +89,7 @@ Interface* Menu::showNewMenu(enum state state) {
         delete currentMenu;
 
     if (state == TRAIN) {
-        return new TrainMenu(eng);
+        return new TrainMenu(eng, this, &mnistTraining);
     } else if (state == DRAW) {
         return new DrawMenu(eng);
     } else if (state == ERRORS) {
