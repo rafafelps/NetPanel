@@ -4,8 +4,6 @@
 #include "DrawMenu.hpp"
 #include "ErrorsMenu.hpp"
 
-#include <iostream>
-
 #define BUTTON_MARGIN eng->getScreenWidth() * 0.25f * 0.07f
 
 Menu::Menu(Engine* eng) {
