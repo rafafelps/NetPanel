@@ -34,6 +34,7 @@ private:
     void initButtons();
 private:
     std::string modelName;
+    enum state state;
 
     Engine* eng;
     Button buttons[3];

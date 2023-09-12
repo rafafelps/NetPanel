@@ -12,7 +12,8 @@ Menu::Menu(Engine* eng) {
     this->eng = eng;
     globalNetwork = nullptr;
     currentMenu = nullptr;
-    modelName = "";
+    modelName = "--------";
+    state = NONE;
 
     mnistTraining.setData("dataset/mnist/training/train-labels.idx1-ubyte",
                           "dataset/mnist/training/train-images.idx3-ubyte");
@@ -25,7 +26,7 @@ Menu::Menu(Engine* eng) {
 Menu::~Menu() {
     if (currentMenu)
         delete currentMenu;
-        
+
     if (globalNetwork)
         delete globalNetwork;
 }
@@ -33,12 +34,13 @@ Menu::~Menu() {
 void Menu::update() {
     for (int i = 0; i < 3; i++) {
         if (buttons[i].clicked()) {
+            // Button already pressed
             if (buttons[i++].select(true)) {
-                // Botao jah apertado selecionado 2 vezes
                 return;
             }
 
-            currentMenu = showNewMenu((enum state)i);
+            state = (enum state)i;
+            currentMenu = showNewMenu(state);
 
             for (int j = 0; j < 2; j++) {
                 if (i >= 3) { i = 0; }
@@ -62,6 +64,17 @@ void Menu::render() {
 
     if (currentMenu)
         currentMenu->render();
+
+    float menuBorder = eng->getScreenWidth() * 0.25f;
+    float menuWidth = eng->getScreenWidth() * 0.75f;
+    float menuCenterX = menuBorder + menuWidth * 0.5f;
+    float fontSize = 32.f / 720.f * eng->getScreenHeight();\
+    std::string s = "MODEL: " + modelName;
+    if (state == TRAIN) {
+        DrawText(s.c_str(), menuCenterX - MeasureText(s.c_str(), fontSize) * 0.5f, eng->getScreenHeight() * 0.8f, fontSize, (Color){158, 158, 158, 255});
+    } else {
+        DrawText(s.c_str(), menuCenterX - MeasureText(s.c_str(), fontSize) * 0.5f, eng->getScreenHeight() - fontSize, fontSize, (Color){158, 158, 158, 255});
+    }
 }
 
 std::string Menu::getModelName() const {
