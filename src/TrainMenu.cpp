@@ -104,13 +104,6 @@ void TrainMenu::render() {
     s = s.substr(0, s.find(".") + 5);
     DrawText("ACCURACY", trMenuCenterX - MeasureText("ACCURACY", biggerFontSize) * 0.5f, eng->getScreenHeight() * 0.1f, biggerFontSize, (Color){158, 158, 158, 255});
     DrawText(s.c_str(), trMenuCenterX - MeasureText(s.c_str(), biggerFontSize) * 0.5f, (eng->getScreenHeight() * 0.5f - (eng->getScreenHeight() * 0.1f + biggerFontSize)) * 0.5f + eng->getScreenHeight() * 0.1f + biggerFontSize * 0.5f, biggerFontSize, (Color){158, 158, 158, 255});
-
-    float third = trMenuWidth / 3.f;
-    DrawLine(menuBorder + third, 0, menuBorder + third, eng->getScreenHeight(), RED);
-    DrawLine(menuBorder + 2 * third, 0, menuBorder + 2 * third, eng->getScreenHeight(), RED);
-    DrawLine(trMenuCenterX, 0, trMenuCenterX, eng->getScreenHeight(), RED);
-    DrawLine(menuBorder + third/2, 0, menuBorder + third/2, eng->getScreenHeight(), RED);
-    DrawLine(menuBorder + 5 * third / 2.f, 0, menuBorder + 5 * third / 2.f, eng->getScreenHeight(), RED);
 }
 
 void TrainMenu::initButtons() {
