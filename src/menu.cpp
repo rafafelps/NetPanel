@@ -65,6 +65,10 @@ void Menu::render() {
     if (currentMenu)
         currentMenu->render();
 
+    if (state == NONE) {
+        return;
+    }
+    
     float menuBorder = eng->getScreenWidth() * 0.25f;
     float menuWidth = eng->getScreenWidth() * 0.75f;
     float menuCenterX = menuBorder + menuWidth * 0.5f;
@@ -73,7 +77,7 @@ void Menu::render() {
     if (state == TRAIN) {
         DrawText(s.c_str(), menuCenterX - MeasureText(s.c_str(), fontSize) * 0.5f, eng->getScreenHeight() * 0.8f, fontSize, (Color){158, 158, 158, 255});
     } else {
-        DrawText(s.c_str(), menuCenterX - MeasureText(s.c_str(), fontSize) * 0.5f, eng->getScreenHeight() - fontSize, fontSize, (Color){158, 158, 158, 255});
+        DrawText(s.c_str(), menuCenterX - MeasureText(s.c_str(), fontSize) * 0.5f, eng->getScreenHeight() - fontSize - 1, fontSize, (Color){158, 158, 158, 255});
     }
 }
 
