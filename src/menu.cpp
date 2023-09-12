@@ -34,6 +34,8 @@ void Menu::update() {
                 return;
             }
 
+            state = (enum state)i;
+
             for (int j = 0; j < 2; j++) {
                 if (i >= 3) { i = 0; }
                 buttons[i++].select(false);
