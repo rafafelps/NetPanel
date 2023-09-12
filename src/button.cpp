@@ -1,5 +1,5 @@
-#include "button.hpp"
-#include "engine.hpp"
+#include "Button.hpp"
+#include "Engine.hpp"
 
 #include <iostream>
 
@@ -56,3 +56,6 @@ void Button::setText(std::string txt) {
     text = txt;
 }
 
+void Button::setFontSize(unsigned char size) {
+    fontSize = size;
+}

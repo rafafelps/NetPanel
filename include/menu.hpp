@@ -1,6 +1,9 @@
 #pragma once
-#include "interface.hpp"
-#include "button.hpp"
+#include <string>
+#include "Interface.hpp"
+#include "Button.hpp"
+#include "Dataset.hpp"
+#include "NeuralNetwork.hpp"
 
 enum state {
     NONE,
@@ -19,9 +22,22 @@ public:
     void update();
     void render();
 
+    Dataset* getTrainingDataset();
+    Dataset* getTestDataset();
+
     void setEngine(Engine* eng);
+    void setModel(std::string s);
+    void setNewGlobalNet(NeuralNetwork* net);
+    Interface* showNewMenu(enum state state);
 private:
-    enum state state;
+    void initButtons();
+private:
+    std::string modelName;
+
     Engine* eng;
     Button buttons[3];
+    Dataset mnistTraining;
+    Dataset mnistTest;
+    NeuralNetwork* globalNetwork;
+    Interface* currentMenu;
 };

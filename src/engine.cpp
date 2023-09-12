@@ -1,5 +1,4 @@
-#include "engine.hpp"
-#include "menu.hpp"
+#include "Engine.hpp"
 
 Engine::Engine(unsigned int height, float aspectRatio) :
 aspectRatio(aspectRatio),
@@ -30,16 +29,6 @@ unsigned int Engine::getScreenWidth() const {
 
 unsigned int Engine::getScreenHeight() const {
     return height;
-}
-
-void Engine::removeObject(unsigned int id) {
-    unsigned int position = 0;
-    for (auto obj : objList) {
-        if (obj->getID() == id) {
-            objList.erase(objList.begin() + position);
-        }
-        position++;
-    }
 }
 
 void Engine::update() {

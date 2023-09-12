@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "interface.hpp"
+#include "Interface.hpp"
 
 class Engine;
 
@@ -18,6 +18,7 @@ public:
     void setEngine(Engine* eng);
     void setPosition(Rectangle pos);
     void setText(std::string txt);
+    void setFontSize(unsigned char size);
 
 private:
     Engine* eng;

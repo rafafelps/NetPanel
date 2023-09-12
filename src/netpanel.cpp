@@ -1,4 +1,4 @@
-#include "netpanel.hpp"
+#include "Netpanel.hpp"
 
 Netpanel::Netpanel() :
 isRunning(false) {}

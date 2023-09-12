@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
-#include "interface.hpp"
-#include "menu.hpp"
+#include "Interface.hpp"
+#include "Menu.hpp"
 
 class Engine {
 public:
@@ -11,8 +11,6 @@ public:
 
     unsigned int getScreenWidth() const;
     unsigned int getScreenHeight() const;
-
-    void removeObject(unsigned int id);
 private:
     void update();
     void render();

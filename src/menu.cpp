@@ -1,12 +1,105 @@
-#include "menu.hpp"
-#include "engine.hpp"
+#include "Menu.hpp"
+#include "Engine.hpp"
+#include "TrainMenu.hpp"
+#include "DrawMenu.hpp"
+#include "ErrorsMenu.hpp"
 
-#define BUTTON_MARGIN (float)(eng->getScreenWidth()) * (float)(0.25) * (float)(0.07)
+#include <iostream>
 
-Menu::Menu(Engine* eng) :
-state(NONE) {
+#define BUTTON_MARGIN eng->getScreenWidth() * 0.25f * 0.07f
+
+Menu::Menu(Engine* eng) {
     this->eng = eng;
+    globalNetwork = nullptr;
+    currentMenu = nullptr;
 
+    mnistTraining.setData("dataset/mnist/training/train-labels.idx1-ubyte",
+                          "dataset/mnist/training/train-images.idx3-ubyte");
+    mnistTest.setData("dataset/mnist/test/t10k-labels.idx1-ubyte",
+                      "dataset/mnist/test/t10k-images.idx3-ubyte");
+
+    initButtons();
+}
+
+Menu::~Menu() {
+    if (globalNetwork)
+        delete globalNetwork;
+
+    if (currentMenu)
+        delete currentMenu;
+}
+
+void Menu::update() {
+    for (int i = 0; i < 3; i++) {
+        if (buttons[i].clicked()) {
+            if (buttons[i++].select(true)) {
+                // Botao jah apertado selecionado 2 vezes
+                return;
+            }
+
+            currentMenu = showNewMenu((enum state)i);
+
+            for (int j = 0; j < 2; j++) {
+                if (i >= 3) { i = 0; }
+                buttons[i++].select(false);
+            }
+
+            break;
+        }
+    }
+
+    if (currentMenu)
+        currentMenu->update();
+}
+
+void Menu::render() {
+    DrawRectangle(0, 0, eng->getScreenWidth() * 0.25, eng->getScreenHeight(), (Color){128, 128, 128, 255});
+    
+    for (int i = 0; i < 3; i++) {
+        buttons[i].render();
+    }
+
+    if (currentMenu)
+        currentMenu->render();
+}
+
+Dataset* Menu::getTrainingDataset() {
+    return &mnistTraining;
+}
+
+Dataset* Menu::getTestDataset() {
+    return &mnistTest;
+}
+
+void Menu::setEngine(Engine* eng) {
+    this->eng = eng;
+}
+
+void Menu::setModel(std::string s) {
+    modelName = s;
+}
+
+void Menu::setNewGlobalNet(NeuralNetwork* net) {
+    if (globalNetwork) { delete globalNetwork; }
+    globalNetwork = net;
+}
+
+Interface* Menu::showNewMenu(enum state state) {
+    if (currentMenu)
+        delete currentMenu;
+
+    if (state == TRAIN) {
+        return new TrainMenu(eng);
+    } else if (state == DRAW) {
+        return new DrawMenu(eng);
+    } else if (state == ERRORS) {
+        return new ErrorsMenu(eng);
+    }
+
+    return nullptr;
+}
+
+void Menu::initButtons() {
     for (int i = 0; i < 3; i++) {
         buttons[i].setEngine(eng);
     }
@@ -22,38 +115,4 @@ state(NONE) {
     buttons[0].setText("Train");
     buttons[1].setText("Draw");
     buttons[2].setText("Errors");
-}
-
-Menu::~Menu() {}
-
-void Menu::update() {
-    for (int i = 0; i < 3; i++) {
-        if (buttons[i].clicked()) {
-            if (buttons[i++].select(true)) {
-                // Botao jah apertado selecionado 2 vezes
-                return;
-            }
-
-            state = (enum state)i;
-
-            for (int j = 0; j < 2; j++) {
-                if (i >= 3) { i = 0; }
-                buttons[i++].select(false);
-            }
-
-            break;
-        }
-    }
-}
-
-void Menu::render() {
-    DrawRectangle(0, 0, eng->getScreenWidth() * 0.25, eng->getScreenHeight(), (Color){128, 128, 128, 255});
-    
-    for (int i = 0; i < 3; i++) {
-        buttons[i].render();
-    }
-}
-
-void Menu::setEngine(Engine* eng) {
-    this->eng = eng;
 }
