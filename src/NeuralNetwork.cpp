@@ -104,6 +104,10 @@ unsigned int NeuralNetwork::getCorrectPredictions() const {
     return correctEval;
 }
 
+bool NeuralNetwork::getLearningStatus() const {
+    return isLearning;
+}
+
 void NeuralNetwork::setDataset(Dataset* dataset) {
     this->dataset = dataset;
 }
@@ -243,11 +247,14 @@ void NeuralNetwork::learn(unsigned int epochs) {
             correctData[label]--;
         }
 
-        if (isLearning)
+        if (isLearning) {
             currEpoch++;
+            currData = 0;
+        }
 
         delete[] correctData;
     }
+    isLearning = false;
     
     delete[] m;
     delete[] v;

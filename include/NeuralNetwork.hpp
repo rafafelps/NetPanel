@@ -25,6 +25,7 @@ public:
     unsigned int getCurrentEpoch() const;
     unsigned int getCurrentData() const;
     unsigned int getCorrectPredictions() const;
+    bool getLearningStatus() const;
 
     void setDataset(Dataset* dataset);
     void setName(std::string name);

@@ -154,6 +154,14 @@ void TrainMenu::initButtons() {
 }
 
 void TrainMenu::startNetwork() {
+    if (!localNetwork->getLearningStatus()) {
+        if (learnThread) {
+            learnThread->join();
+            delete learnThread;
+            learnThread = nullptr;
+        }
+    }
+
     if (learnThread)
         return;
 
