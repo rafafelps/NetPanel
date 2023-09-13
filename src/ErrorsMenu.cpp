@@ -35,6 +35,8 @@ ErrorsMenu::ErrorsMenu(Engine* eng, Menu* mn, Dataset* mnist) {
     texture = LoadTextureFromImage(img);
     UnloadImage(img);
 
+    initButton();
+
     if (globalNetwork)
         findNextError();
 }
@@ -44,7 +46,11 @@ ErrorsMenu::~ErrorsMenu() {
 }
 
 void ErrorsMenu::update() {
+    if (!globalNetwork) { return; }
 
+    if (next.clicked()) {
+        findNextError();
+    }
 }
 
 void ErrorsMenu::render() {
@@ -82,10 +88,8 @@ void ErrorsMenu::render() {
         s = "x";
     DrawText(s.c_str(), labelAlign - MeasureText(s.c_str(), fontSize) * 0.5f, yCenter + delta, fontSize, (Color){158, 158, 158, 255});
 
-    
-    //DrawLine(menuCenterX, 0, menuCenterX, eng->getScreenHeight(), RED);
-    //DrawLine(predAlign, 0, predAlign, eng->getScreenHeight(), RED);
-    //DrawLine(labelAlign, 0, labelAlign, eng->getScreenHeight(), RED);
+    if (globalNetwork)
+        next.render();
 }
 
 // Maybe new thread
@@ -133,4 +137,22 @@ void ErrorsMenu::findNextError() {
     UnloadTexture(texture);
     texture = LoadTextureFromImage(img);
     UnloadImage(img);
+}
+
+void ErrorsMenu::initButton() {
+    next.setEngine(eng);
+    next.setText("next");
+    next.setFontSize(25.f / 720.f * eng->getScreenHeight());
+    
+    float modelFontSize = 32.f / 720.f * eng->getScreenHeight();
+    float menuCenterX = eng->getScreenWidth() * 0.75f * 0.5f + eng->getScreenWidth() * 0.25f;
+    float menuCenterY = eng->getScreenHeight() * 0.08f + size.y + 2 + ((eng->getScreenHeight() - modelFontSize - 1) - (eng->getScreenHeight() * 0.08f + size.y + 2) * 0.5f);
+
+
+    Rectangle pos = {menuCenterX, eng->getScreenHeight() * 0.79f, 100, 50};
+    pos.width = 100.f / 720.f * eng->getScreenHeight();
+    pos.height = 50.f / 720.f * eng->getScreenHeight();
+    pos.x -= pos.width * 0.5f;
+    pos.y -= pos.height * 0.5f;
+    next.setPosition(pos);
 }

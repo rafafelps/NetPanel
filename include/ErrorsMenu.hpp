@@ -3,6 +3,7 @@
 #include "NeuralNetwork.hpp"
 #include "Menu.hpp"
 #include "Dataset.hpp"
+#include "Button.hpp"
 
 class Engine;
 
@@ -15,6 +16,7 @@ public:
     void render();
 private:
     void findNextError();
+    void initButton();
 private:
     unsigned int currData;
     unsigned int predValue;
@@ -27,4 +29,5 @@ private:
     Dataset* mnist;
     Texture2D texture;
     Vector2 size;
+    Button next;
 };

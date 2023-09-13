@@ -70,7 +70,7 @@ void Menu::render() {
     float menuBorder = eng->getScreenWidth() * 0.25f;
     float menuWidth = eng->getScreenWidth() * 0.75f;
     float menuCenterX = menuBorder + menuWidth * 0.5f;
-    float fontSize = 32.f / 720.f * eng->getScreenHeight();\
+    float fontSize = 32.f / 720.f * eng->getScreenHeight();
     std::string s = "MODEL: " + modelName;
     if (state == TRAIN) {
         DrawText(s.c_str(), menuCenterX - MeasureText(s.c_str(), fontSize) * 0.5f, eng->getScreenHeight() * 0.8f, fontSize, (Color){158, 158, 158, 255});
