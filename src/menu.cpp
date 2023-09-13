@@ -108,7 +108,7 @@ Interface* Menu::showNewMenu(enum state state) {
     } else if (state == DRAW) {
         return new DrawMenu(eng);
     } else if (state == ERRORS) {
-        return new ErrorsMenu(eng);
+        return new ErrorsMenu(eng, this, &mnistTest);
     }
 
     return nullptr;
