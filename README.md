@@ -26,3 +26,8 @@ Made with C++ using raylib to render and EncephalonPrime for the neural networks
       <img src="./docs/assets/netpanel_usage.gif" width="200%" alt="Produced with C++" />
     </a>
 </p>
+
+## Autores
+
+| [<img src="https://github.com/rafafelps.png?size=115" width=115><br><sub>@rafafelps</sub>](https://github.com/rafafelps)  |
+| :---: |
