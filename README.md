@@ -1,4 +1,4 @@
-<h1 align="center">NetPanek</h1>
+<h1 align="center">NetPanel</h1>
 
 <div align="center">
   <p>
