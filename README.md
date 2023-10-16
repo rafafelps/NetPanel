@@ -27,7 +27,7 @@ Made with C++ using raylib to render and EncephalonPrime for the neural networks
     </a>
 </p>
 
-## Autores
+## Author
 
 | [<img src="https://github.com/rafafelps.png?size=115" width=115><br><sub>@rafafelps</sub>](https://github.com/rafafelps)  |
 | :---: |
